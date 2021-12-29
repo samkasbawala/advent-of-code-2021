@@ -1,1 +1,1 @@
-# Day 2 Link: [https://adventofcode.com/2021/day/2#part2](https://adventofcode.com/2021/day/2#part2)
+# Day 2 Link: [https://adventofcode.com/2021/day/2](https://adventofcode.com/2021/day/2)
