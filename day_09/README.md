@@ -1,0 +1,1 @@
+# Day 9 Link: [https://adventofcode.com/2021/day/9](https://adventofcode.com/2021/day/9)
