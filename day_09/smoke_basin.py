@@ -8,189 +8,14 @@ __status__ = "Development"
 import math
 
 
-def smoke_basin_part_1(input_file_path):
-
+def get_floor_map(input_file_path):
     with open(input_file_path) as file:
         floor_map = [line.strip() for line in file.readlines()]
 
-    sum = 0
-    for i in range(len(floor_map)):
-        for j in range(len(floor_map[i])):
-
-            height = int(floor_map[i][j])
-
-            # Top left
-            if i == 0 and j == 0:
-                if height < int(floor_map[i + 1][j]) and height < int(
-                    floor_map[i][j + 1]
-                ):
-                    sum += height + 1
-
-            # Top right
-            elif i == 0 and j == len(floor_map[i]) - 1:
-                if height < int(floor_map[i + 1][j]) and height < int(
-                    floor_map[i][j - 1]
-                ):
-                    sum += height + 1
-
-            # Bottom left
-            elif i == len(floor_map) - 1 and j == 0:
-                if height < int(floor_map[i - 1][j]) and height < int(
-                    floor_map[i][j + 1]
-                ):
-                    sum += height + 1
-
-            # Bottom right
-            elif i == len(floor_map) - 1 and j == len(floor_map[i]) - 1:
-                if height < int(floor_map[i - 1][j]) and height < int(
-                    floor_map[i][j - 1]
-                ):
-                    sum += height + 1
-
-            # Top row
-            elif i == 0:
-                if (
-                    height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i][j + 1])
-                ):
-                    sum += height + 1
-
-            # Bottom row
-            elif i == len(floor_map) - 1:
-                if (
-                    height < int(floor_map[i - 1][j])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i][j + 1])
-                ):
-                    sum += height + 1
-
-            # Left edge
-            elif j == 0:
-                if (
-                    height < int(floor_map[i][j + 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    sum += height + 1
-
-            # Right edge
-            elif j == len(floor_map[i]) - 1:
-                if (
-                    height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    sum += height + 1
-
-            # Four adjacent spots
-            else:
-                if (
-                    height < int(floor_map[i][j + 1])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    sum += height + 1
-
-    return sum
+    return [list(string) for string in floor_map]
 
 
-def get_basin_size(floor_map, i, j):
-
-    height = int(floor_map[i][j])
-
-    if height >= 9:
-        return 0
-
-    # Mark that we have been here
-    tmp = list(floor_map[i])
-    tmp[j] = "9"
-    floor_map[i] = "".join(tmp)
-
-    # Top left
-    if i == 0 and j == 0:
-        return (
-            1
-            + get_basin_size(floor_map, i, j + 1)
-            + get_basin_size(floor_map, i + 1, j)
-        )
-
-    # Top right
-    elif i == 0 and j == len(floor_map[i]) - 1:
-        return (
-            1
-            + get_basin_size(floor_map, i, j - 1)
-            + get_basin_size(floor_map, i + 1, j)
-        )
-
-    # Bottom left
-    elif i == len(floor_map) - 1 and j == 0:
-        return (
-            1
-            + get_basin_size(floor_map, i - 1, j)
-            + get_basin_size(floor_map, i, j + 1)
-        )
-
-    # Bottom right
-    elif i == len(floor_map) - 1 and j == len(floor_map[i]) - 1:
-        return (
-            1
-            + get_basin_size(floor_map, i - 1, j)
-            + get_basin_size(floor_map, i, j - 1)
-        )
-
-    # Top row
-    elif i == 0:
-        return (
-            1
-            + get_basin_size(floor_map, i, j - 1)
-            + get_basin_size(floor_map, i, j + 1)
-            + get_basin_size(floor_map, i + 1, j)
-        )
-
-    # Bottom row
-    elif i == len(floor_map) - 1:
-        return (
-            1
-            + get_basin_size(floor_map, i, j - 1)
-            + get_basin_size(floor_map, i, j + 1)
-            + get_basin_size(floor_map, i - 1, j)
-        )
-
-    # Left edge
-    elif j == 0:
-        return (
-            1
-            + get_basin_size(floor_map, i - 1, j)
-            + get_basin_size(floor_map, i + 1, j)
-            + get_basin_size(floor_map, i, j + 1)
-        )
-
-    # Right edge
-    elif j == len(floor_map[i]) - 1:
-        return (
-            1
-            + get_basin_size(floor_map, i - 1, j)
-            + get_basin_size(floor_map, i + 1, j)
-            + get_basin_size(floor_map, i, j - 1)
-        )
-
-    # Four adjacent spots
-    else:
-        return (
-            1
-            + get_basin_size(floor_map, i - 1, j)
-            + get_basin_size(floor_map, i + 1, j)
-            + get_basin_size(floor_map, i, j + 1)
-            + get_basin_size(floor_map, i, j - 1)
-        )
-
-
-def smoke_basin_part_2(input_file_path):
-
-    with open(input_file_path) as file:
-        floor_map = [line.strip() for line in file.readlines()]
+def get_basins(floor_map):
 
     basins = []
     for i in range(len(floor_map)):
@@ -198,85 +23,73 @@ def smoke_basin_part_2(input_file_path):
 
             height = int(floor_map[i][j])
 
-            # Top left
-            if i == 0 and j == 0:
-                if height < int(floor_map[i + 1][j]) and height < int(
-                    floor_map[i][j + 1]
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+            # True be default if at top row
+            up = True if (i == 0 or height < int(floor_map[i - 1][j])) else False
 
-            # Top right
-            elif i == 0 and j == len(floor_map[i]) - 1:
-                if height < int(floor_map[i + 1][j]) and height < int(
-                    floor_map[i][j - 1]
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+            # True by default if at bottom row
+            down = (
+                True
+                if (i == len(floor_map) - 1 or height < int(floor_map[i + 1][j]))
+                else False
+            )
 
-            # Bottom left
-            elif i == len(floor_map) - 1 and j == 0:
-                if height < int(floor_map[i - 1][j]) and height < int(
-                    floor_map[i][j + 1]
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+            # True by deafult if at left most column
+            left = True if (j == 0 or height < int(floor_map[i][j - 1])) else False
 
-            # Bottom right
-            elif i == len(floor_map) - 1 and j == len(floor_map[i]) - 1:
-                if height < int(floor_map[i - 1][j]) and height < int(
-                    floor_map[i][j - 1]
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+            # True by default if at right most column
+            right = (
+                True
+                if (j == len(floor_map[i]) - 1 or height < int(floor_map[i][j + 1]))
+                else False
+            )
 
-            # Top row
-            elif i == 0:
-                if (
-                    height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i][j + 1])
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+            # If all true, note height and position
+            if up and down and left and right:
+                basins.append((i, j, height))
 
-            # Bottom row
-            elif i == len(floor_map) - 1:
-                if (
-                    height < int(floor_map[i - 1][j])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i][j + 1])
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+    return basins
 
-            # Left edge
-            elif j == 0:
-                if (
-                    height < int(floor_map[i][j + 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
 
-            # Right edge
-            elif j == len(floor_map[i]) - 1:
-                if (
-                    height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+def get_basin_size(floor_map, i, j):
 
-            # Four adjacent spots
-            else:
-                if (
-                    height < int(floor_map[i][j + 1])
-                    and height < int(floor_map[i][j - 1])
-                    and height < int(floor_map[i + 1][j])
-                    and height < int(floor_map[i - 1][j])
-                ):
-                    basins.append(get_basin_size(floor_map, i, j))
+    try:
+        height = int(floor_map[i][j])
+    except IndexError:
+        return 0
 
-    return math.prod(sorted(basins, reverse=True)[0 : min(3, len(basins))])
+    # Negative indexing works in python, make sure to not process these cases
+    if height >= 9 or i < 0 or j < 0:
+        return 0
+
+    # Mark that we have been here
+    floor_map[i][j] = "9"
+
+    return (
+        1
+        + get_basin_size(floor_map, i - 1, j)
+        + get_basin_size(floor_map, i + 1, j)
+        + get_basin_size(floor_map, i, j + 1)
+        + get_basin_size(floor_map, i, j - 1)
+    )
+
+
+def smoke_basin_part_1(input_file_path):
+    floor_map = get_floor_map(input_file_path)
+    basins = get_basins(floor_map)
+
+    return sum([height + 1 for _, _, height in basins])
+
+
+def smoke_basin_part_2(input_file_path):
+    floor_map = get_floor_map(input_file_path)
+    basins = get_basins(floor_map)
+    basin_sizes = [get_basin_size(floor_map, i, j) for i, j, _ in basins]
+
+    return math.prod(sorted(basin_sizes, reverse=True)[0 : min(3, len(basins))])
 
 
 if __name__ == "__main__":
     print(f"Sum of risk level: {smoke_basin_part_1('input_sample.txt')}")
     print(f"Sum of risk level: {smoke_basin_part_1('input.txt')}")
-    print(f"Sum of risk level: {smoke_basin_part_2('input_sample.txt')}")
-    print(f"Sum of risk level: {smoke_basin_part_2('input.txt')}")
+    print(f"3 largest basins multiplied: {smoke_basin_part_2('input_sample.txt')}")
+    print(f"3 largest basins multiplied: {smoke_basin_part_2('input.txt')}")
